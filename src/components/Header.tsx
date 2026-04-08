@@ -12,7 +12,10 @@ import {
   Image as ImageIcon,
   Globe,
   Loader2,
-  History
+  History,
+  Keyboard,
+  Menu,
+  X
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ShortcutsMenu from './ShortcutsMenu';
@@ -59,6 +62,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isFetching, setIsFetching] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isExportingImage, setIsExportingImage] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const runWithTimeout = async <T,>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
     return Promise.race([
@@ -133,68 +137,69 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className={cn(
-      "h-14 border-b flex items-center justify-between px-4 sticky top-0 z-50 transition-colors",
+      "border-b sticky top-0 z-50 transition-colors",
       isDarkMode ? "bg-[#0d0d0f] border-white/5" : "bg-white border-gray-900"
     )}>
-      <div className="flex items-center gap-3">
-        <img 
-          src="/assets/logo-full.png" 
-          alt="JTree Logo" 
-          className={cn(
-            "h-8 w-auto object-contain transition-all duration-300",
-            isDarkMode && "invert brightness-0 invert"
-          )}
-        />
-      </div>
-
-      <div className="flex items-center gap-4 flex-1 justify-center max-w-2xl px-4">
-        <form onSubmit={handleFetch} className="relative flex-1 group">
-          <Globe className={cn(
-            "w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 transition-colors",
-            isDarkMode ? "text-gray-500 group-focus-within:text-blue-500" : "text-gray-300 group-focus-within:text-gray-900"
-          )} />
-          <input 
-            type="text" 
-            placeholder="Fetch JSON from URL" 
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+      <div className="h-14 px-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img
+            src="/assets/logo-full.png"
+            alt="JTree Logo"
             className={cn(
-              "pl-9 pr-10 py-1.5 text-xs rounded-lg border transition-all w-full outline-none",
-              isDarkMode 
-                ? "bg-white/5 border-white/5 text-white focus:ring-2 focus:ring-blue-500/50" 
-                : "bg-white border-gray-200 text-gray-900 focus:border-gray-900"
-            )}
-          />
-          <button 
-            type="submit"
-            disabled={isFetching}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-400 disabled:opacity-50"
-          >
-            {isFetching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-          </button>
-        </form>
-
-        <div className="relative group flex-1">
-          <Search className={cn(
-            "w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 transition-colors",
-            isDarkMode ? "text-gray-500 group-focus-within:text-blue-500" : "text-gray-300 group-focus-within:text-gray-900"
-          )} />
-          <input 
-            type="text" 
-            placeholder="Search Node" 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={cn(
-              "pl-9 pr-4 py-1.5 text-xs rounded-lg border transition-all w-full outline-none",
-              isDarkMode 
-                ? "bg-white/5 border-white/5 text-white focus:ring-2 focus:ring-blue-500/50" 
-                : "bg-white border-gray-200 text-gray-900 focus:border-gray-900"
+              "h-8 w-auto object-contain transition-all duration-300",
+              isDarkMode && "invert brightness-0 invert"
             )}
           />
         </div>
-      </div>
 
-      <div className="flex items-center gap-1">
+        <div className="hidden xl:flex items-center gap-4 flex-1 justify-center max-w-2xl px-4">
+          <form onSubmit={handleFetch} className="relative flex-1 group">
+            <Globe className={cn(
+              "w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 transition-colors",
+              isDarkMode ? "text-gray-500 group-focus-within:text-blue-500" : "text-gray-300 group-focus-within:text-gray-900"
+            )} />
+            <input
+              type="text"
+              placeholder="Fetch JSON from URL"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className={cn(
+                "pl-9 pr-10 py-1.5 text-xs rounded-lg border transition-all w-full outline-none",
+                isDarkMode
+                  ? "bg-white/5 border-white/5 text-white focus:ring-2 focus:ring-blue-500/50"
+                  : "bg-white border-gray-200 text-gray-900 focus:border-gray-900"
+              )}
+            />
+            <button
+              type="submit"
+              disabled={isFetching}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-400 disabled:opacity-50"
+            >
+              {isFetching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            </button>
+          </form>
+
+          <div className="relative group flex-1">
+            <Search className={cn(
+              "w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 transition-colors",
+              isDarkMode ? "text-gray-500 group-focus-within:text-blue-500" : "text-gray-300 group-focus-within:text-gray-900"
+            )} />
+            <input
+              type="text"
+              placeholder="Search Node"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={cn(
+                "pl-9 pr-4 py-1.5 text-xs rounded-lg border transition-all w-full outline-none",
+                isDarkMode
+                  ? "bg-white/5 border-white/5 text-white focus:ring-2 focus:ring-blue-500/50"
+                  : "bg-white border-gray-200 text-gray-900 focus:border-gray-900"
+              )}
+            />
+          </div>
+        </div>
+
+        <div className="hidden xl:flex items-center gap-1">
         <div className="flex items-center gap-1 mr-2">
           <button 
             onClick={() => setLayoutDirection(layoutDirection === 'LR' ? 'TB' : 'LR')}
@@ -336,7 +341,183 @@ const Header: React.FC<HeaderProps> = ({
           setIsOpen={setIsShortcutsOpen} 
           isDarkMode={isDarkMode} 
         />
+        </div>
+
+        <div className="hidden md:flex xl:hidden items-center gap-2">
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isDarkMode ? "hover:bg-white/5 text-gray-500 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-900"
+            )}
+            title="Toggle Theme"
+          >
+            {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={() => setIsMobileMenuOpen(prev => !prev)}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isDarkMode ? "hover:bg-white/5 text-gray-500 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-900"
+            )}
+            title="Open tools"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+        <div className="md:hidden flex items-center gap-2">
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isDarkMode ? "hover:bg-white/5 text-gray-500 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-900"
+            )}
+            title="Toggle Theme"
+          >
+            {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={() => setIsMobileMenuOpen(prev => !prev)}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              isDarkMode ? "hover:bg-white/5 text-gray-500 hover:text-white" : "hover:bg-gray-100 text-gray-500 hover:text-gray-900"
+            )}
+            title="Open menu"
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
+
+      <div className={cn(
+        "xl:hidden border-t px-4 py-2",
+        isDarkMode ? "border-white/10" : "border-gray-200"
+      )}>
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className={cn(
+              "w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2",
+              isDarkMode ? "text-gray-500" : "text-gray-400"
+            )} />
+            <input
+              type="text"
+              placeholder="Search Node"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={cn(
+                "pl-9 pr-4 py-2 text-xs rounded-lg border transition-all w-full outline-none",
+                isDarkMode
+                  ? "bg-white/5 border-white/10 text-white focus:ring-2 focus:ring-blue-500/50"
+                  : "bg-white border-gray-200 text-gray-900 focus:border-gray-900"
+              )}
+            />
+          </div>
+          <button
+            onClick={fitView}
+            className={cn(
+              "p-2 rounded-lg transition-colors shrink-0",
+              isDarkMode ? "bg-white/5 text-gray-300 hover:text-white" : "bg-gray-100 text-gray-700 hover:text-gray-900"
+            )}
+            title="Reset Zoom"
+          >
+            <Maximize className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleResetLayout}
+            className={cn(
+              "p-2 rounded-lg transition-colors shrink-0",
+              isDarkMode ? "bg-white/5 text-gray-300 hover:text-white" : "bg-gray-100 text-gray-700 hover:text-gray-900"
+            )}
+            title="Reset Nodes"
+          >
+            <RefreshCcw className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {isMobileMenuOpen && (
+        <div className={cn(
+          "xl:hidden border-t px-4 py-3 space-y-3",
+          isDarkMode ? "border-white/10 bg-[#0d0d0f]" : "border-gray-200 bg-white"
+        )}>
+          <form onSubmit={handleFetch} className="relative">
+            <Globe className={cn(
+              "w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2",
+              isDarkMode ? "text-gray-500" : "text-gray-400"
+            )} />
+            <input
+              type="text"
+              placeholder="Fetch JSON from URL"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className={cn(
+                "pl-9 pr-10 py-2 text-xs rounded-lg border transition-all w-full outline-none",
+                isDarkMode
+                  ? "bg-white/5 border-white/10 text-white focus:ring-2 focus:ring-blue-500/50"
+                  : "bg-white border-gray-200 text-gray-900 focus:border-gray-900"
+              )}
+            />
+            <button
+              type="submit"
+              disabled={isFetching}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-400 disabled:opacity-50"
+            >
+              {isFetching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            </button>
+          </form>
+
+          <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+            <button onClick={zoomIn} className={cn("p-2 rounded-lg transition-colors", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title="Zoom In"><Plus className="w-4 h-4 mx-auto" /></button>
+            <button onClick={zoomOut} className={cn("p-2 rounded-lg transition-colors", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title="Zoom Out"><Minus className="w-4 h-4 mx-auto" /></button>
+            <button onClick={fitView} className={cn("p-2 rounded-lg transition-colors", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title="Fit View"><Maximize className="w-4 h-4 mx-auto" /></button>
+            <button onClick={handleResetLayout} className={cn("p-2 rounded-lg transition-colors", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title="Reset Layout"><RefreshCcw className="w-4 h-4 mx-auto" /></button>
+            <button onClick={handleDownload} className={cn("p-2 rounded-lg transition-colors", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title="Download JSON"><Download className="w-4 h-4 mx-auto" /></button>
+            <button onClick={handleExportImage} disabled={isExportingImage} className={cn("p-2 rounded-lg transition-colors disabled:opacity-60", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title={isExportingImage ? "Exporting..." : "Export Image"}>{isExportingImage ? <Loader2 className="w-4 h-4 mx-auto animate-spin" /> : <ImageIcon className="w-4 h-4 mx-auto" />}</button>
+            <button onClick={() => setLayoutDirection(layoutDirection === 'LR' ? 'TB' : 'LR')} className={cn("p-2 rounded-lg transition-colors", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title="Toggle Layout"><Layout className={cn("w-4 h-4 mx-auto", layoutDirection === 'TB' && "rotate-90")} /></button>
+            <button onClick={() => setIsShortcutsOpen(true)} className={cn("p-2 rounded-lg transition-colors", isDarkMode ? "bg-white/5 text-gray-300" : "bg-gray-100 text-gray-700")} title="Shortcuts"><Keyboard className="w-4 h-4 mx-auto" /></button>
+          </div>
+
+          <button
+            onClick={() => setIsHistoryOpen(prev => !prev)}
+            className={cn(
+              "w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs transition-colors",
+              isDarkMode ? "bg-white/5 text-gray-300 hover:text-white" : "bg-gray-100 text-gray-700 hover:text-gray-900"
+            )}
+          >
+            <History className="w-4 h-4" />
+            Local History
+          </button>
+
+          {isHistoryOpen && (
+            <div className={cn(
+              "max-h-48 overflow-y-auto rounded-lg border",
+              isDarkMode ? "border-white/10 bg-black/20" : "border-gray-200 bg-gray-50"
+            )}>
+              {history.length === 0 ? (
+                <div className="px-3 py-2 text-xs text-gray-500 italic">No history yet</div>
+              ) : (
+                history.slice(0, 8).map((h, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      onSelectHistory(h);
+                      setIsHistoryOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={cn(
+                      "w-full px-3 py-2 text-left text-xs truncate transition-colors",
+                      isDarkMode ? "hover:bg-white/5 text-gray-400 hover:text-white" : "hover:bg-white text-gray-600 hover:text-gray-900"
+                    )}
+                  >
+                    {h.substring(0, 80)}...
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </header>
   );
 };

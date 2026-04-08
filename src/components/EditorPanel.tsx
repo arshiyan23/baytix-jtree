@@ -7,6 +7,7 @@ import { cn } from '../lib/utils';
 interface EditorPanelProps {
   isDarkMode: boolean;
   isCollapsed: boolean;
+  editorWidth: string;
   jsonString: string;
   setJsonString: (value: string) => void;
   editorRef: React.MutableRefObject<any>;
@@ -17,6 +18,7 @@ interface EditorPanelProps {
 const EditorPanel: React.FC<EditorPanelProps> = ({
   isDarkMode,
   isCollapsed,
+  editorWidth,
   jsonString,
   setJsonString,
   editorRef,
@@ -27,21 +29,21 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
     try {
       const parsed = JSON.parse(jsonString);
       setJsonString(JSON.stringify(parsed, null, 2));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const handleMinify = () => {
     try {
       const parsed = JSON.parse(jsonString);
       setJsonString(JSON.stringify(parsed));
-    } catch (e) {}
+    } catch (e) { }
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={false}
-      animate={{ 
-        width: isCollapsed ? 0 : '40%',
+      animate={{
+        width: isCollapsed ? 0 : editorWidth,
         opacity: isCollapsed ? 0 : 1
       }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -62,7 +64,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
           )}>JSON Editor</span>
         </div>
         <div className="flex items-center gap-1">
-          <button 
+          <button
             onClick={handlePrettify}
             className={cn(
               "p-1.5 rounded transition-colors",
@@ -72,7 +74,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
           >
             <AlignLeft className="w-3.5 h-3.5" />
           </button>
-          <button 
+          <button
             onClick={handleMinify}
             className={cn(
               "p-1.5 rounded transition-colors",
@@ -83,7 +85,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
             <Minimize2 className="w-3.5 h-3.5" />
           </button>
           <div className="w-[1px] h-4 bg-white/10 mx-1" />
-          <button 
+          <button
             onClick={handleFoldAll}
             className={cn(
               "p-1.5 rounded transition-colors",
@@ -93,7 +95,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({
           >
             <FoldVertical className="w-3.5 h-3.5" />
           </button>
-          <button 
+          <button
             onClick={handleUnfoldAll}
             className={cn(
               "p-1.5 rounded transition-colors",

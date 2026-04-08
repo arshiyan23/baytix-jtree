@@ -41,6 +41,7 @@ const GraphPanel: React.FC<GraphPanelProps> = ({
         fitView
         minZoom={0.1}
         maxZoom={2}
+        proOptions={{ hideAttribution: true }}
       >
         <Background color={isDarkMode ? "#333" : "#f1f1f1"} gap={20} variant={isDarkMode ? "dots" : "lines"} />
         <Controls 

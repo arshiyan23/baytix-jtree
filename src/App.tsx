@@ -31,6 +31,7 @@ function JsonTreeApp() {
   const [history, setHistory] = useState<string[]>([]);
   const [stats, setStats] = useState({ nodes: 0, depth: 0, size: '0 B' });
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+  const editorWidth = 'clamp(280px, 36vw, 540px)';
 
   const editorRef = React.useRef<any>(null);
   const { fitView, zoomIn, zoomOut } = useReactFlow();
@@ -267,6 +268,7 @@ function JsonTreeApp() {
         <EditorPanel
           isDarkMode={isDarkMode}
           isCollapsed={isEditorCollapsed}
+          editorWidth={editorWidth}
           jsonString={jsonString}
           setJsonString={setJsonString}
           editorRef={editorRef}
@@ -283,7 +285,7 @@ function JsonTreeApp() {
               : "bg-white border-gray-200 text-gray-600 hover:text-gray-900"
           )}
           style={{
-            left: isEditorCollapsed ? 0 : 'calc(40% - 1px)'
+            left: isEditorCollapsed ? 0 : `calc(${editorWidth} - 1px)`
           }}
         >
           {isEditorCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}

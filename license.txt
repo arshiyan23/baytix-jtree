@@ -1,0 +1,22 @@
+Copyright (c) 2026 Baytix
+
+All rights reserved.
+
+This software, including all applications under "Baytix Apps" (apps.baytix.net),
+along with all source code, designs, features, and related assets,
+is the exclusive property of Baytix.
+
+No part of this software may be:
+
+- Copied
+- Modified
+- Distributed
+- Reproduced
+- Reverse engineered
+- Used for commercial or personal projects
+
+without explicit written permission from Baytix.
+
+Unauthorized use is strictly prohibited and may result in legal action.
+
+Official platform: https://apps.baytix.net

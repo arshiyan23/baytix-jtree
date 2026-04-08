@@ -51,14 +51,14 @@ const GraphPanel: React.FC<GraphPanelProps> = ({
           )} 
         />
         <MiniMap 
-          nodeColor={isDarkMode ? "#333" : "#f1f1f1"} 
-          maskColor={isDarkMode ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.8)"}
+          nodeColor={isDarkMode ? "#333" : "#cbd5e1"} 
+          maskColor={isDarkMode ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.1)"}
           className={cn(
             "!border",
-            isDarkMode ? "!bg-[#0d0d0f] !border-white/5" : "!bg-white !border-gray-200"
+            isDarkMode ? "!bg-[#0d0d0f] !border-white/5" : "!bg-white/90 !border-gray-300 shadow-md"
           )}
           pannable
-          zoomable
+          zoomable={false}
         />
       </ReactFlow>
     </div>

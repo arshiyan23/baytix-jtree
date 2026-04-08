@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ShortcutsMenu from './ShortcutsMenu';
-import { toPng } from 'html-to-image';
+import { toSvg } from 'html-to-image';
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -58,15 +58,64 @@ const Header: React.FC<HeaderProps> = ({
   const [url, setUrl] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isExportingImage, setIsExportingImage] = useState(false);
+
+  const runWithTimeout = async <T,>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
+    return Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        window.setTimeout(() => reject(new Error('timeout')), timeoutMs);
+      }),
+    ]);
+  };
 
   const handleExportImage = async () => {
-    const el = document.querySelector('.react-flow__viewport') as HTMLElement;
-    if (el) {
-      const dataUrl = await toPng(el, { backgroundColor: isDarkMode ? '#0a0a0c' : '#f9fafb' });
+    if (isExportingImage) return;
+
+    setIsExportingImage(true);
+
+    try {
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+
+      const paneEl = document.querySelector('.react-flow') as HTMLElement | null;
+      const viewportEl = document.querySelector('.react-flow__viewport') as HTMLElement | null;
+
+      if (!paneEl || !viewportEl) {
+        throw new Error('Could not find graph container');
+      }
+
+      const rect = paneEl.getBoundingClientRect();
+      const width = Math.max(1, Math.floor(rect.width));
+      const height = Math.max(1, Math.floor(rect.height));
+
+      const svgDataUrl = await runWithTimeout(
+        toSvg(viewportEl, {
+          backgroundColor: isDarkMode ? '#0a0a0c' : '#f9fafb',
+          width,
+          height,
+          cacheBust: true,
+        }),
+        15000
+      );
+
+      const response = await fetch(svgDataUrl);
+      const svgBlob = await response.blob();
+
       const link = document.createElement('a');
-      link.download = 'baytix-jtree.png';
-      link.href = dataUrl;
+      link.download = 'baytix-jtree.svg';
+      link.href = URL.createObjectURL(svgBlob);
       link.click();
+      window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    } catch (error) {
+      console.error('Failed to export image:', error);
+      const isTimeout = error instanceof Error && error.message === 'timeout';
+      window.alert(
+        isTimeout
+          ? 'Export took too long. Try collapsing nodes and export again.'
+          : 'Could not export image. Please try again.'
+      );
+    } finally {
+      setIsExportingImage(false);
     }
   };
 
@@ -159,13 +208,14 @@ const Header: React.FC<HeaderProps> = ({
           </button>
           <button 
             onClick={handleExportImage}
+            disabled={isExportingImage}
             className={cn(
-              "p-2 rounded-lg transition-colors",
+              "p-2 rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-60",
               isDarkMode ? "hover:bg-white/5 text-gray-500 hover:text-white" : "hover:bg-gray-200 text-gray-500 hover:text-gray-900"
             )} 
-            title="Export as Image"
+            title={isExportingImage ? "Exporting Image..." : "Export as Image"}
           >
-            <ImageIcon className="w-4 h-4" />
+            {isExportingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
           </button>
         </div>
 

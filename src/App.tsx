@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  useNodesState, 
-  useEdgesState, 
+import {
+  useNodesState,
+  useEdgesState,
   useReactFlow,
   ReactFlowProvider,
 } from 'reactflow';
@@ -23,7 +23,7 @@ function JsonTreeApp() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isEditorCollapsed, setIsEditorCollapsed] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
@@ -31,7 +31,7 @@ function JsonTreeApp() {
   const [history, setHistory] = useState<string[]>([]);
   const [stats, setStats] = useState({ nodes: 0, depth: 0, size: '0 B' });
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
-  
+
   const editorRef = React.useRef<any>(null);
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
@@ -56,7 +56,7 @@ function JsonTreeApp() {
       let visualNodes = 0;
       let properties = 0;
       let maxDepth = 0;
-      
+
       const calc = (data: any, depth: number) => {
         maxDepth = Math.max(maxDepth, depth);
         if (typeof data === 'object' && data !== null) {
@@ -67,12 +67,12 @@ function JsonTreeApp() {
         }
       };
       calc(parsed, 0);
-      
+
       const size = new Blob([jsonString]).size;
       const sizeStr = size > 1024 ? `${(size / 1024).toFixed(2)} KB` : `${size} B`;
-      
+
       setStats({ nodes: visualNodes, depth: maxDepth, size: sizeStr, properties });
-    } catch (e) {}
+    } catch (e) { }
   }, [jsonString]);
 
   const toggleNode = useCallback((nodeId: string) => {
@@ -94,11 +94,11 @@ function JsonTreeApp() {
         // Simple path setter root.a[0].b
         const parts = path.split('.').slice(1); // remove 'root'
         let current = obj;
-        
+
         for (let i = 0; i < parts.length; i++) {
           let part = parts[i];
           const arrayMatch = part.match(/(.+)\[(\d+)\]/);
-          
+
           if (arrayMatch) {
             const key = arrayMatch[1];
             const index = parseInt(arrayMatch[2]);
@@ -134,10 +134,10 @@ function JsonTreeApp() {
 
   const generateGraph = useCallback((json: any, filter: string = '', collapsed: Set<string>, direction: 'LR' | 'TB') => {
     const { nodes: layoutedNodes, edges: layoutedEdges } = createGraphElements(
-      json, 
-      filter, 
-      collapsed, 
-      toggleNode, 
+      json,
+      filter,
+      collapsed,
+      toggleNode,
       onUpdateValue,
       onHover,
       isDarkMode,
@@ -175,7 +175,7 @@ function JsonTreeApp() {
     try {
       const parsed = JSON.parse(jsonString);
       generateGraph(parsed, searchTerm, collapsedNodes);
-    } catch (e) {}
+    } catch (e) { }
   }, [jsonString, searchTerm, collapsedNodes, generateGraph]);
 
   const handleFoldAll = useCallback(() => {
@@ -244,7 +244,7 @@ function JsonTreeApp() {
       "flex flex-col h-screen overflow-hidden transition-colors duration-300",
       isDarkMode ? "bg-[#0a0a0c] text-gray-200" : "bg-white text-gray-900"
     )}>
-      <Header 
+      <Header
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
         searchTerm={searchTerm}
@@ -264,7 +264,7 @@ function JsonTreeApp() {
       />
 
       <main className="flex-1 flex overflow-hidden relative">
-        <EditorPanel 
+        <EditorPanel
           isDarkMode={isDarkMode}
           isCollapsed={isEditorCollapsed}
           jsonString={jsonString}
@@ -274,12 +274,12 @@ function JsonTreeApp() {
           handleUnfoldAll={handleUnfoldAll}
         />
 
-        <button 
+        <button
           onClick={() => setIsEditorCollapsed(!isEditorCollapsed)}
           className={cn(
             "absolute top-1/2 -translate-y-1/2 z-[60] w-6 h-12 flex items-center justify-center rounded-r-md border border-l-0 shadow-lg transition-all",
-            isDarkMode 
-              ? "bg-[#1a1a1e] border-white/10 text-gray-400 hover:text-white" 
+            isDarkMode
+              ? "bg-[#1a1a1e] border-white/10 text-gray-400 hover:text-white"
               : "bg-white border-gray-200 text-gray-600 hover:text-gray-900"
           )}
           style={{
@@ -289,7 +289,7 @@ function JsonTreeApp() {
           {isEditorCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
 
-        <GraphPanel 
+        <GraphPanel
           isDarkMode={isDarkMode}
           nodes={nodes}
           edges={edges}
@@ -299,7 +299,7 @@ function JsonTreeApp() {
 
         {hoveredPath && (
           <div className={cn(
-            "absolute bottom-4 left-4 z-[100] px-3 py-1.5 rounded-lg border shadow-lg flex items-center gap-2 text-[11px] font-mono transition-all animate-in fade-in slide-in-from-bottom-2",
+            "absolute bottom-4 left-24 z-[100] px-3 py-1.5 rounded-lg border shadow-lg flex items-center gap-2 text-[11px] font-mono transition-all animate-in fade-in slide-in-from-bottom-2",
             isDarkMode ? "bg-[#1a1a1e] border-white/10 text-blue-400" : "bg-white border-gray-200 text-gray-900"
           )}>
             <span className="text-gray-400 font-sans uppercase text-[9px] tracking-widest font-bold mr-1">Path</span>
@@ -310,7 +310,8 @@ function JsonTreeApp() {
 
       <Footer isDarkMode={isDarkMode} isValid={isValid} stats={stats} />
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .react-flow__handle {
           width: 6px !important;
           height: 6px !important;
@@ -341,6 +342,11 @@ function JsonTreeApp() {
           border-radius: 8px !important;
           overflow: hidden !important;
           border: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)'} !important;
+        }
+        .react-flow__minimap-viewport {
+          fill: ${isDarkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(0, 0, 0, 0.05)'} !important;
+          stroke: ${isDarkMode ? 'rgba(59, 130, 246, 0.5)' : 'rgba(0, 0, 0, 0.3)'} !important;
+          stroke-width: 2px !important;
         }
       `}} />
     </div>
